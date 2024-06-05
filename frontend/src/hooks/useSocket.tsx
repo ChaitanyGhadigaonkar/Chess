@@ -16,7 +16,9 @@ export const useSocket = () => {
     }
 
     return () => {
-      ws.close()
+      if (socket?.readyState === 1) {
+        socket?.close()
+      }
     }
   }, [])
 

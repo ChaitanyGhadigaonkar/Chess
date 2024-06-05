@@ -2,23 +2,17 @@ import { useEffect, useState } from "react"
 import ChessBoard from "../components/ChessBoard"
 import { useSocket } from "../hooks/useSocket"
 import { MESSAGE_TYPES } from "../utils/constants"
-import { Color, PieceSymbol, Square } from "chess.js"
+import { Chess, Color, PieceSymbol, Square } from "chess.js"
 
 const BoardScreen = () => {
   const socket = useSocket()
 
-  const [from, setFrom] = useState<{
-    square: Square
-    type: PieceSymbol
-    color: Color
-  }>()
+  const [board, setBoard] = useState<Chess | null>(new Chess())
 
-  const [to, setTo] = useState<{
-    square: Square
-    type: PieceSymbol
-    color: Color
-  }>()
-  console.log(from, to)
+  const [from, setFrom] = useState<Square | null>(null)
+
+  const [to, setTo] = useState<Square | null>(null)
+
   useEffect(() => {
     if (!socket) {
       return
@@ -32,7 +26,9 @@ const BoardScreen = () => {
           console.log("Game Initialized")
           break
         case MESSAGE_TYPES.MOVE:
-          console.log("Move Event Occured")
+          console.log("Move Event Ocurred")
+          const { from, to } = message.payload.move
+          board?.move({ from, to })
           break
       }
     }
@@ -44,12 +40,15 @@ const BoardScreen = () => {
         <div>Loading...</div>
       </div>
     )
+
   return (
     <div className="bg-[#302e2b] text-white">
       <div className="max-w-screen-xl min-h-screen mx-auto flex flex-col md:flex-row items-center justify-center p-10 ">
         <div className="board w-full h-full md:w-3/4">
           <ChessBoard
             socket={socket}
+            board={board as Chess}
+            setBoard={setBoard}
             from={from}
             setFrom={setFrom}
             to={to}
