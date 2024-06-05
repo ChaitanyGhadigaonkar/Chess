@@ -54,7 +54,8 @@ export class GameManager {
 
           if (game) {
             // type validation with zod
-            game.makeMove(socket, message.move)
+            console.log(message.payload.move)
+            game.makeMove(socket, message.payload.move)
           }
         }
       } catch (error) {

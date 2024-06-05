@@ -68,14 +68,14 @@ export class Game {
       this.user2.send(
         JSON.stringify({
           type: MESSAGE_TYPES.MOVE,
-          payload: move,
+          payload: { move },
         })
       )
     } else {
       this.user1.send(
         JSON.stringify({
           type: MESSAGE_TYPES.MOVE,
-          payload: move,
+          payload: { move },
         })
       )
     }

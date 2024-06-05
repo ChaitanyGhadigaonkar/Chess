@@ -47,13 +47,13 @@ class Game {
         if (this.moveCount % 2 === 0) {
             this.user2.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.MOVE,
-                payload: move,
+                payload: { move },
             }));
         }
         else {
             this.user1.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.MOVE,
-                payload: move,
+                payload: { move },
             }));
         }
         this.moveCount++;

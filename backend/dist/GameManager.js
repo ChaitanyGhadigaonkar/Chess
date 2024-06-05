@@ -11,8 +11,6 @@ class GameManager {
     }
     addUser(user) {
         const isExists = this.users.find((element) => element === user);
-        // console.log(isExists)
-        // no duplication
         if (!isExists) {
             this.users.push(user);
             this.addHandler(user);
@@ -24,29 +22,34 @@ class GameManager {
     }
     addHandler(socket) {
         socket.on("message", (data) => {
-            const message = JSON.parse(data.toString());
-            if (message.type === Messages_1.MESSAGE_TYPES.INIT_GAME) {
-                if (this.pendingUser) {
-                    console.log("initiating the game");
-                    const game = new Game_1.Game(this.pendingUser, socket);
-                    this.games.push(game);
-                    this.pendingUser = null;
+            try {
+                const message = JSON.parse(data.toString());
+                if (message.type === Messages_1.MESSAGE_TYPES.INIT_GAME) {
+                    if (this.pendingUser) {
+                        console.log("initiating the game");
+                        const game = new Game_1.Game(this.pendingUser, socket);
+                        this.games.push(game);
+                        this.pendingUser = null;
+                    }
+                    else {
+                        console.log("waiting for another user");
+                        this.pendingUser = socket;
+                    }
                 }
-                else {
-                    console.log("waiting for another user");
-                    this.pendingUser = socket;
+                if (message.type === Messages_1.MESSAGE_TYPES.MOVE) {
+                    const game = this.games.find((item) => item.user1 === socket || item.user2 === socket);
+                    if (!game) {
+                        return;
+                    }
+                    if (game) {
+                        // type validation with zod
+                        console.log(message.payload.move);
+                        game.makeMove(socket, message.payload.move);
+                    }
                 }
             }
-            if (message.type === Messages_1.MESSAGE_TYPES.MOVE) {
-                const game = this.games.find((item) => item.user1 === socket || item.user2 === socket);
-                if (!game) {
-                    // console.log("game not found")
-                    return;
-                }
-                if (game) {
-                    // type validation with zod
-                    game.makeMove(socket, message.move);
-                }
+            catch (error) {
+                console.log("error");
             }
         });
     }
