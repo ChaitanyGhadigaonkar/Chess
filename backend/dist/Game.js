@@ -27,7 +27,12 @@ class Game {
             this.board.move(move);
         }
         catch (err) {
-            user.send("Invalid Move ! NOT ALLOWED");
+            user.send(JSON.stringify({
+                type: Messages_1.MESSAGE_TYPES.INVALID_MOVE,
+                payload: {
+                    message: "Invalid Move ! NOT ALLOWED",
+                },
+            }));
             console.log(err);
         }
         if (this.board.isGameOver()) {

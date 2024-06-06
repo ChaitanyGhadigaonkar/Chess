@@ -41,7 +41,14 @@ export class Game {
     try {
       this.board.move(move)
     } catch (err) {
-      user.send("Invalid Move ! NOT ALLOWED")
+      user.send(
+        JSON.stringify({
+          type: MESSAGE_TYPES.INVALID_MOVE,
+          payload: {
+            message: "Invalid Move ! NOT ALLOWED",
+          },
+        })
+      )
       console.log(err)
     }
 
