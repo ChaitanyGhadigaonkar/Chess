@@ -8,23 +8,42 @@ type ChessBoardProps = {
   to: Square | null
   setFrom: React.Dispatch<React.SetStateAction<Square | null>>
   setTo: React.Dispatch<React.SetStateAction<Square | null>>
-  board: Chess
-  setBoard: React.Dispatch<React.SetStateAction<Chess | null>>
+  chess: Chess
+  setChess: React.Dispatch<React.SetStateAction<Chess>>
+  board: ({
+    square: Square
+    type: PieceSymbol
+    color: Color
+  } | null)[][]
+  setBoard: React.Dispatch<
+    React.SetStateAction<
+      ({
+        square: Square
+        type: PieceSymbol
+        color: Color
+      } | null)[][]
+    >
+  >
+  gameStatus: "Initial" | "Waiting" | "Started" | "Over"
+  color: Color | null
 }
 
 const ChessBoard = ({
   socket,
+  chess,
   board,
   from,
   to,
   setFrom,
   setTo,
+  setChess,
   setBoard,
+  gameStatus,
+  color,
 }: ChessBoardProps) => {
-  useEffect(() => {}, [])
   return (
     <>
-      {board?.board().map((row, rowIndex) => (
+      {board.map((row, rowIndex) => (
         <div
           key={rowIndex}
           className={`border w-fit flex
@@ -46,12 +65,26 @@ const ChessBoard = ({
                 } border-2
               ${
                 from === item?.square ? "border-[#f00]" : ""
-              } w-full h-full flex justify-center items-center cursor-pointer`}
+              } w-full h-full flex justify-center items-center ${
+                  gameStatus === "Started"
+                    ? "cursor-pointer"
+                    : "cursor-not-allowed"
+                }`}
                 onClick={() => {
+                  if (
+                    (gameStatus === "Initial" || gameStatus === "Waiting") &&
+                    color !== item?.color
+                  ) {
+                    return
+                  }
                   const squareRepresentation =
                     String.fromCharCode(97 + squareIndex) + "" + (8 - rowIndex)
-                  // console.log(squareRepresentation)
+
                   if (from) {
+                    if (item?.color === color) {
+                      setFrom(squareRepresentation as Square)
+                      return
+                    }
                     setTo(squareRepresentation as Square)
                     socket.send(
                       JSON.stringify({
@@ -64,15 +97,30 @@ const ChessBoard = ({
                         },
                       })
                     )
-                    board.move({ from, to: squareRepresentation as Square })
+                    chess.move({ from, to: squareRepresentation as Square })
+                    setBoard(chess.board())
                     setFrom(null)
                     setTo(null)
                   } else {
-                    setFrom(squareRepresentation as Square)
+                    if (item?.color === color) {
+                      setFrom(squareRepresentation as Square)
+                    }
                   }
                 }}
               >
-                {item ? item.type : ""}
+                {" "}
+                {item === null ? null : (
+                  <img
+                    className="w-10 h-10"
+                    src={
+                      item.color === "b"
+                        ? `/pieces/${item.type}.svg`
+                        : `/pieces/${item.type.toUpperCase()} WHITE.svg`
+                    }
+                    alt={item.square}
+                    srcSet=""
+                  />
+                )}
               </div>
             </div>
           ))}
