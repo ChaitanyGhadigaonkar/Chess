@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom"
 
 const Home = () => {
   const navigate = useNavigate()
-
   return (
     <div className="px-4 py-2 grid grid-cols-1 md:grid-cols-2 my-12 ">
       <div className="chessImage">

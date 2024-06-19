@@ -7,6 +7,7 @@ export class Game {
   user2: WebSocket
   board: Chess
   moveCount: number
+  error: any
 
   constructor(user1: WebSocket, user2: WebSocket) {
     this.user1 = user1
@@ -49,9 +50,10 @@ export class Game {
           },
         })
       )
+      this.error = err
       console.log(err)
     }
-
+    //  Game Over
     if (this.board.isGameOver()) {
       this.user1.emit(
         JSON.stringify({
@@ -71,6 +73,21 @@ export class Game {
         })
       )
     }
+
+    // Game Draw
+
+    if (this.board.isDraw()) {
+      this.user1.send(
+        JSON.stringify({
+          type: MESSAGE_TYPES.DRAW,
+          payload: {
+            message: "Game Draw",
+          },
+        })
+      )
+    }
+
+    //
     if (this.moveCount % 2 === 0) {
       this.user2.send(
         JSON.stringify({
@@ -86,6 +103,8 @@ export class Game {
         })
       )
     }
-    this.moveCount++
+    if (!this.error) {
+      this.moveCount++
+    }
   }
 }

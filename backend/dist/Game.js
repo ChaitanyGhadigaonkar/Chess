@@ -33,8 +33,10 @@ class Game {
                     message: "Invalid Move ! NOT ALLOWED",
                 },
             }));
+            this.error = err;
             console.log(err);
         }
+        //  Game Over
         if (this.board.isGameOver()) {
             this.user1.emit(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.GAME_OVER,
@@ -49,6 +51,16 @@ class Game {
                 },
             }));
         }
+        // Game Draw
+        if (this.board.isDraw()) {
+            this.user1.send(JSON.stringify({
+                type: Messages_1.MESSAGE_TYPES.DRAW,
+                payload: {
+                    message: "Game Draw",
+                },
+            }));
+        }
+        //
         if (this.moveCount % 2 === 0) {
             this.user2.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.MOVE,
@@ -61,7 +73,9 @@ class Game {
                 payload: { move },
             }));
         }
-        this.moveCount++;
+        if (!this.error) {
+            this.moveCount++;
+        }
     }
 }
 exports.Game = Game;

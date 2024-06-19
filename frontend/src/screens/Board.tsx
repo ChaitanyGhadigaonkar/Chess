@@ -51,6 +51,8 @@ const BoardScreen = () => {
           const { message: errorMessage } = message.payload
           alert(errorMessage)
           break
+        case MESSAGE_TYPES.DRAW:
+          alert("Game Draw")
       }
     }
   }, [socket])

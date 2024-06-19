@@ -3,4 +3,5 @@ export const MESSAGE_TYPES = Object.freeze({
   MOVE: "move",
   GAME_OVER: "game_over",
   INVALID_MOVE: "invalid_move",
+  DRAW: "draw",
 })
