@@ -56,9 +56,9 @@ authRouter.get("/logout", (req, res) => {
         }
     });
 });
-authRouter.get("/github", passport_1.default.authenticate("github", { scope: ["user:email"] }));
+authRouter.get("/github/login", passport_1.default.authenticate("github", { scope: ["user : email"] }));
 authRouter.get("/github/callback", passport_1.default.authenticate("github", {
-    successRedirect: "http://localhost:5173",
+    successRedirect: "http://localhost:5173/board/random",
     failureRedirect: "/auth/login/failed",
 }));
 exports.default = authRouter;

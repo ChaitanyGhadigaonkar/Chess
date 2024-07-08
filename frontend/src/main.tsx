@@ -4,6 +4,9 @@ import "./index.css"
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import Home from "./screens/Home.tsx"
 import BoardScreen from "./screens/Board.tsx"
+import Login from "./screens/Login.tsx"
+import { RecoilRoot } from "recoil"
+import { Suspense } from "react"
 
 const router = createBrowserRouter([
   {
@@ -19,6 +22,10 @@ const router = createBrowserRouter([
         element: <p>About page</p>,
       },
       {
+        path: "login",
+        element: <Login />,
+      },
+      {
         path: "contact-us",
         element: <p>contact us page</p>,
       },
@@ -31,7 +38,9 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  // <React.StrictMode>
-  <RouterProvider router={router} />
-  // </React.StrictMode>
+  <RecoilRoot>
+    <Suspense fallback={<div>Loading...</div>}>
+      <RouterProvider router={router} />
+    </Suspense>
+  </RecoilRoot>
 )

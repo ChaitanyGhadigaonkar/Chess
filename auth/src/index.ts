@@ -40,6 +40,6 @@ app.get("/", (req, res) => {
 })
 app.use("/api/auth", authRouter)
 
-app.listen(5000, () => {
-  console.log(`http://localhost:5000`)
+app.listen(process.env.PORT || 5500, () => {
+  console.log(`http://localhost:${process.env.PORT || 5500}`)
 })

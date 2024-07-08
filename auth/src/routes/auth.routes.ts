@@ -51,13 +51,13 @@ authRouter.get("/logout", (req: Request, res: Response) => {
 })
 
 authRouter.get(
-  "/github",
-  passport.authenticate("github", { scope: ["user:email"] })
+  "/github/login",
+  passport.authenticate("github", { scope: ["user : email"] })
 )
 authRouter.get(
   "/github/callback",
   passport.authenticate("github", {
-    successRedirect: "http://localhost:5173",
+    successRedirect: "http://localhost:5173/board/random",
     failureRedirect: "/auth/login/failed",
   })
 )

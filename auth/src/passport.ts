@@ -15,7 +15,7 @@ function passportConfig() {
       {
         clientID: process.env.GITHUB_CLIENT_ID!,
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-        callbackURL: "http://localhost:5173/auth/github/callback",
+        callbackURL: "http://localhost:5000/api/auth/github/callback",
       },
       async function (
         accessToken: string,
@@ -31,10 +31,9 @@ function passportConfig() {
 
         const data: GitHubEmailResponse[] = await res.json()
         const primaryEmail = data.find((item) => item.primary)
-
         const user = await db.user.upsert({
           create: {
-            email: profile!.email,
+            email: profile!.emails![0].value,
             name: profile.displayName,
           },
           update: {

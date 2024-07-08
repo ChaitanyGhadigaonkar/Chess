@@ -19,7 +19,7 @@ function passportConfig() {
     passport_1.default.use(new passport_github2_1.Strategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: "http://localhost:5173/auth/github/callback",
+        callbackURL: "http://localhost:5000/api/auth/github/callback",
     }, function (accessToken, refreshToken, profile, done) {
         return __awaiter(this, void 0, void 0, function* () {
             const res = yield fetch(`https://api.github.com/user/emails`, {
@@ -31,7 +31,7 @@ function passportConfig() {
             const primaryEmail = data.find((item) => item.primary);
             const user = yield prisma_1.default.user.upsert({
                 create: {
-                    email: profile.email,
+                    email: profile.emails[0].value,
                     name: profile.displayName,
                 },
                 update: {
