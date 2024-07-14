@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc -b",
-    "dev": "tsc -b && node dist/index"
+    "dev": "tsc -b && node dist/index",
+    "start": "node dist/index"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
