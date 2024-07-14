@@ -5,6 +5,11 @@ import { MESSAGE_TYPES } from "../utils/constants"
 import { Chess, Color, Square } from "chess.js"
 import useAuth from "../hooks/useAuth"
 
+type OpponentDetails = {
+  userId: string
+  name: string
+  email: string
+}
 const BoardScreen = () => {
   const socket = useSocket()
 
@@ -22,7 +27,7 @@ const BoardScreen = () => {
 
   const [color, setColor] = useState<Color | null>(null)
 
-  const [remotePlayer, setRemotePlayer] = useState(null)
+  const [remotePlayer, setRemotePlayer] = useState<OpponentDetails | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -39,7 +44,9 @@ const BoardScreen = () => {
 
       switch (message.type) {
         case MESSAGE_TYPES.INIT_GAME:
-          const { color: myColor } = message.payload
+          const { color: myColor, opponentDetails: OpponentDetails } =
+            message.payload
+          setRemotePlayer(OpponentDetails)
           setColor(myColor === "black" ? "b" : "w")
           setGameStatus("Started")
           break
@@ -58,6 +65,7 @@ const BoardScreen = () => {
           break
         case MESSAGE_TYPES.INVALID_MOVE:
           const { message: errorMessage } = message.payload
+          // chess.undo()
           alert(errorMessage)
           break
         case MESSAGE_TYPES.DRAW:
@@ -65,7 +73,6 @@ const BoardScreen = () => {
       }
     }
   }, [socket])
-
   if (!socket)
     return (
       <div className="bg-[#302e2b] text-white w-full h-screen">
@@ -81,7 +88,9 @@ const BoardScreen = () => {
             <h1 className="text-xl font-semibold">{user?.name}</h1>
             <h1 className="text-xl font-semibold">VS</h1>
 
-            <h1 className="text-xl font-semibold">Opponent</h1>
+            <h1 className="text-xl font-semibold">
+              {remotePlayer ? remotePlayer.name : "Waiting..."}
+            </h1>
           </div>
         </div>
         <div className="w-full h-full flex flex-col md:flex-row">
@@ -109,7 +118,11 @@ const BoardScreen = () => {
                     JSON.stringify({
                       type: MESSAGE_TYPES.INIT_GAME,
                       payload: {
-                        user: user?.name,
+                        userDetails: {
+                          name: user?.name,
+                          email: user?.email,
+                          userId: user?.userId,
+                        },
                       },
                     })
                   )

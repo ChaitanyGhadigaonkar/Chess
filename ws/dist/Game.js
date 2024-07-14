@@ -8,16 +8,26 @@ class Game {
         this.user1 = user1;
         this.user2 = user2;
         this.board = new chess_js_1.Chess();
-        this.user1.send(JSON.stringify({
+        this.user1.socket.send(JSON.stringify({
             type: Messages_1.MESSAGE_TYPES.INIT_GAME,
             payload: {
                 color: "white",
+                opponentDetails: {
+                    name: user2.name,
+                    email: user2.email,
+                    userId: user2.userId,
+                },
             },
         }));
-        this.user2.send(JSON.stringify({
+        this.user2.socket.send(JSON.stringify({
             type: Messages_1.MESSAGE_TYPES.INIT_GAME,
             payload: {
                 color: "black",
+                opponentDetails: {
+                    name: user1.name,
+                    email: user1.email,
+                    userId: user1.userId,
+                },
             },
         }));
         this.moveCount = 0;
@@ -27,7 +37,7 @@ class Game {
             this.board.move(move);
         }
         catch (err) {
-            user.send(JSON.stringify({
+            user.socket.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.INVALID_MOVE,
                 payload: {
                     message: "Invalid Move ! NOT ALLOWED",
@@ -38,13 +48,13 @@ class Game {
         }
         //  Game Over
         if (this.board.isGameOver()) {
-            this.user1.emit(JSON.stringify({
+            this.user1.socket.emit(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.GAME_OVER,
                 payload: {
                     winner: this.board.turn() === "w" ? "black" : "white",
                 },
             }));
-            this.user2.emit(JSON.stringify({
+            this.user2.socket.emit(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.GAME_OVER,
                 payload: {
                     winner: this.board.turn() === "w" ? "black" : "white",
@@ -53,7 +63,7 @@ class Game {
         }
         // Game Draw
         if (this.board.isDraw()) {
-            this.user1.send(JSON.stringify({
+            this.user1.socket.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.DRAW,
                 payload: {
                     message: "Game Draw",
@@ -62,20 +72,22 @@ class Game {
         }
         //
         if (this.moveCount % 2 === 0) {
-            this.user2.send(JSON.stringify({
+            this.user2.socket.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.MOVE,
                 payload: { move },
             }));
         }
         else {
-            this.user1.send(JSON.stringify({
+            this.user1.socket.send(JSON.stringify({
                 type: Messages_1.MESSAGE_TYPES.MOVE,
                 payload: { move },
             }));
         }
         if (!this.error) {
             this.moveCount++;
+            this.error = null;
         }
+        console.log(this.moveCount);
     }
 }
 exports.Game = Game;
